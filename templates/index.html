@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FARMERS GATEWAY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-cover bg-center h-screen" style="background-image: url('https://static.vecteezy.com/system/resources/previews/015/902/722/non_2x/smart-farming-concept-farmer-with-technology-digital-tablet-on-background-of-wheat-field-professional-farmers-use-internet-of-things-iot-computers-system-to-manage-farms-agriculture-modern-idea-photo.jpg');">
+    <div class="bg-black bg-opacity-50 h-screen flex flex-col justify-center items-center text-white text-center">
+        <nav class="absolute top-0 left-0 w-full flex justify-end p-5 bg-black bg-opacity-60">
+            <div>
+                <a href="{{ url_for('register') }}" class="px-4 py-2 bg-green-500 rounded-lg hover:bg-green-600">Register</a>
+                <a href="{{ url_for('login') }}" class="px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600">Login</a>
+
+                
+            </div>
+        </nav>
+        <h1 class="text-5xl font-bold uppercase">FARMERS GATEWAY</h1>
+    </div>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Purchase Product - FARMERS GATEWAY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1485637701894-09ad422f6de6?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmFybWVycyUyMG1hcmtldHxlbnwwfHwwfHx8MA%3D%3D') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .purchase-container {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .purchase-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2e7d32;
+        }
+
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #totalPrice {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #43a047;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #388e3c;
+        }
+
+        .upi-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .upi-section img {
+            margin-top: 10px;
+            max-width: 250px;
+        }
+
+        .upi-id {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+
+<div class="purchase-container">
+    <h2>Purchase Product</h2>
+    <form id="purchaseForm">
+        <p><strong>Seller:</strong> <span id="sellerName"></span></p>
+        <p><strong>Product:</strong> <span id="productName"></span></p>
+        <p><strong>Price per Kg:</strong> ₹<span id="pricePerKg"></span></p>
+        <p><strong>Available Quantity:</strong> <span id="availableQty"></span> Kg</p>
+
+        <label for="buyQty">Enter Quantity (Kg):</label>
+        <input type="number" id="buyQty" min="1" required>
+
+        <p>Total Price: ₹<span id="totalPrice">0</span></p>
+
+        <button type="submit">Place Order</button>
+    </form>
+
+    <div class="upi-section" id="upiSection" style="display: none;">
+        <p>Pay via UPI:</p>
+        <p class="upi-id" id="upiIdText"></p>
+        <img id="qrImage" src="" alt="UPI QR Code">
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const seller = urlParams.get("name");
+    const product = urlParams.get("product");
+    const price = parseFloat(urlParams.get("price"));
+    const available = parseInt(urlParams.get("available"));
+
+    document.getElementById("sellerName").textContent = seller;
+    document.getElementById("productName").textContent = product;
+    document.getElementById("pricePerKg").textContent = price;
+    document.getElementById("availableQty").textContent = available;
+
+    const qtyInput = document.getElementById("buyQty");
+    qtyInput.max = available;
+
+    qtyInput.addEventListener("input", () => {
+        const qty = parseInt(qtyInput.value) || 0;
+        const total = qty * price;
+        document.getElementById("totalPrice").textContent = total.toFixed(2);
+    });
+
+    document.getElementById("purchaseForm").onsubmit = function (e) {
+        e.preventDefault();
+        const quantity = parseInt(qtyInput.value);
+
+        if (quantity < 1 || quantity > available) {
+            alert("Please enter a valid quantity.");
+            return;
+        }
+
+        fetch('/place_order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                seller: seller,
+                product: product,
+                quantity: quantity
+            })
+        }).then(res => res.json())
+          .then(data => {
+              alert(data.message);
+
+              if (data.success) {
+                  const totalAmount = (quantity * price).toFixed(2);
+
+                  fetch(`/get_upi_qr?seller=${encodeURIComponent(seller)}&amount=${encodeURIComponent(totalAmount)}`)
+                      .then(res => res.json())
+                      .then(qrData => {
+                          document.getElementById("upiIdText").textContent = qrData.upi_id;
+                          document.getElementById("qrImage").src = qrData.qr_url;
+                          document.getElementById("upiSection").style.display = 'block';
+                      });
+              }
+          });
+    };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url('https://img.freepik.com/premium-photo/fresh-green-leaves-with-water-drops-water_9493-18909.jpg'); /* New background image URL */
+            background-size: cover; /* Makes the background cover the entire viewport */
+            background-position: center; /* Centers the background image */
+            color: white; /* Makes text white for contrast */
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Ensures the body takes full height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+            border-radius: 10px;
+            color: white;
+            z-index: 10; /* Ensures the content stays on top of the background */
+            position: relative;
+        }
+
+        h1 {
+            color: #00ff00; /* Bright green for the heading */
+        }
+
+        p {
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .back-btn {
+            background-color: #4CAF50; /* Green button background */
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none; /* Removes underline */
+        }
+
+        .back-btn:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        /* Ensure no background or unwanted content behind the button */
+        .back-btn-container {
+            margin-top: 30px; /* Adjust margin if needed */
+        }
+
+        /* Image is set to cover the whole background */
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image covers the entire page */
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1; /* Puts the image behind the content */
+        }
+    </style>
+</head>
+<body>
+    <img src="https://img.freepik.com/premium-photo/fresh-green-leaves-with-water-drops-water_9493-18909.jpg" alt="Background Image"> <!-- Image covering full screen -->
+    
+    <div class="container">
+        <h1>Plant Disease Detection Result</h1>
+        <p><strong>Predicted Class:</strong> {{ result }}</p>
+        
+        <div class="back-btn-container">
+            <a href="/" class="back-btn">Back to Home</a> <!-- Link to home page -->
+        </div>
+    </div>
+</body>
+</html>

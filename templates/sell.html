@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://aehinnovativehydrogel.com/wp-content/uploads/2022/07/04June22_what-are-the-requirements-for-plant-growth_iStock-956366756-1024x730.jpg') 
+            no-repeat center center fixed;
+            background-size: cover;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2d6a4f;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #2d6a4f;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #40916c;
+        }
+    </style>
+</head>
+<body>
+
+<div id="orderContainer">
+    <div class="container order">
+        <h2>Order Management</h2>
+
+        <label for="upi_id">Your UPI ID:</label>
+        <input type="text" id="upi_id" placeholder="e.g., yourname@bank">
+
+        <label for="product">Product:</label>
+        <input type="text" class="product" placeholder="Enter product name">
+
+        <label for="quantity">Quantity in kg:</label>
+        <input type="number" class="quantity" placeholder="Enter quantity">
+
+        <label for="price">Price per kg (INR):</label>
+        <input type="text" class="price" readonly>
+
+        <button class="addProduct">Add Another Product</button>
+        <button class="submitOrder">Submit</button>
+    </div>
+</div>
+
+<script>
+    const apiKey = "579b464db66ec23bdd000001a9bfbe9fecba4eec5d2b7bac982c58c4";
+    const apiUrl = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?format=json&api-key=${apiKey}&limit=1000`;
+
+    document.addEventListener('input', function (e) {
+        if (e.target.classList.contains('product')) {
+            fetchCommodityPrice(e.target);
+        }
+    });
+
+    function fetchCommodityPrice(inputField) {
+        const productName = inputField.value.toLowerCase().trim();
+        if (productName.length === 0) return;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const record = data.records.find(item => item.commodity.toLowerCase() === productName);
+                const priceField = inputField.parentElement.querySelector('.price');
+                if (record && record.modal_price) {
+                    const pricePerQuintal = parseFloat(record.modal_price);
+                    const pricePerKg = (pricePerQuintal / 100).toFixed(2);
+                    priceField.value = pricePerKg;
+                } else {
+                    priceField.value = 'Not Found';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('addProduct')) {
+            e.preventDefault();
+            addProductForm();
+        } else if (e.target.classList.contains('submitOrder')) {
+            e.preventDefault();
+            submitOrder();
+        }
+    });
+
+    function addProductForm() {
+        const orderContainer = document.getElementById('orderContainer');
+        const newForm = document.createElement('div');
+        newForm.classList.add('container', 'order');
+
+        newForm.innerHTML = `
+            <label for='product'>Product:</label>
+            <input type='text' class='product' placeholder='Enter product name'>
+
+            <label for='quantity'>Quantity in kg:</label>
+            <input type='number' class='quantity' placeholder='Enter quantity'>
+
+            <label for='price'>Price per kg (INR):</label>
+            <input type='text' class='price' readonly>
+
+            <button class='addProduct'>Add Another Product</button>
+            <button class='submitOrder'>Submit</button>
+        `;
+
+        orderContainer.appendChild(newForm);
+    }
+
+    function submitOrder() {
+        const upiId = document.getElementById('upi_id')?.value?.trim();
+        if (!upiId || !/^[\w.\-]{2,256}@[a-zA-Z]{2,64}$/.test(upiId)) {
+            alert('Please enter a valid UPI ID (e.g., yourname@bank).');
+            return;
+        }
+
+        const orders = document.querySelectorAll('.order');
+        let orderList = [];
+
+        orders.forEach(order => {
+            const product = order.querySelector('.product').value;
+            const quantity = order.querySelector('.quantity').value;
+            const price = order.querySelector('.price').value;
+
+            if (!product || !quantity || !price || price === 'Not Found') {
+                alert('Please fill in all fields with valid data.');
+                return;
+            }
+
+            orderList.push({
+                product: product,
+                quantity: quantity,
+                total_price: (quantity * price).toFixed(2)
+            });
+        });
+
+        if (orderList.length > 0) {
+            sendOrderToBackend(orderList, upiId);
+        }
+    }
+
+    function sendOrderToBackend(orderList, upiId) {
+        fetch('/submit_order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ upi_id: upiId, orders: orderList })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.redirect) {
+                window.location.href = data.redirect;  // Redirect to sell_map.html
+            } else {
+                alert("Order submitted successfully but no redirect received.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>

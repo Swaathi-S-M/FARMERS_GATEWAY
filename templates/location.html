@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location - FARMERS GATEWAY</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+
+        .button-container {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .button-container button,
+        .button-container input {
+            margin-bottom: 10px;
+        }
+
+        #search-box {
+            width: 250px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .right-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiGXVQphL8FxzkYYMw4852RoSEBLWEaVs&libraries=places&callback=initMap" async defer></script>
+</head>
+<body>
+
+    <div class="button-container">
+        <button id="get-location-btn">Get Current Location</button>
+        <input id="search-box" type="text" placeholder="Search a place...">
+    </div>
+    <button class="right-button" onclick="location.href='/options'">Actions</button>
+
+    <div id="map"></div>
+
+    <script>
+        let map, marker, searchBox;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 0, lng: 0 },
+                zoom: 2
+            });
+
+            const savedLocation = localStorage.getItem('userLocation');
+            if (savedLocation) {
+                const loc = JSON.parse(savedLocation);
+                map.setCenter(loc);
+                map.setZoom(15);
+                addMarker(loc, "Previously Selected Location");
+                updateUserLocation(loc.lat, loc.lng);
+            }
+
+            // Places search
+            const input = document.getElementById("search-box");
+            searchBox = new google.maps.places.SearchBox(input);
+
+            searchBox.addListener("places_changed", function () {
+                const places = searchBox.getPlaces();
+                if (places.length === 0) return;
+
+                const place = places[0];
+                const location = {
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng()
+                };
+
+                updateMapAndSave(location, place.name);
+            });
+
+            map.addListener("click", function (event) {
+                const clickedLocation = {
+                    lat: event.latLng.lat(),
+                    lng: event.latLng.lng()
+                };
+
+                updateMapAndSave(clickedLocation, "Selected Location");
+            });
+        }
+
+        function updateMapAndSave(location, title) {
+            map.setCenter(location);
+            map.setZoom(15);
+            addMarker(location, title);
+            updateUserLocation(location.lat, location.lng);
+            localStorage.setItem('userLocation', JSON.stringify(location)); // Save in localStorage
+        }
+
+        function addMarker(location, title) {
+            if (marker) marker.setMap(null);
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                title: title
+            });
+        }
+
+        function updateUserLocation(lat, lng) {
+            fetch('/update_location', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lat: lat, lng: lng })
+            })
+            .then(response => response.json())
+            .then(data => console.log("Server Response:", data))
+            .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('get-location-btn').addEventListener('click', function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    updateMapAndSave(userLocation, "Your Current Location");
+                }, function () {
+                    alert("Geolocation failed. Please allow location access.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+    </script>
+
+</body>
+</html>

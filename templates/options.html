@@ -1,0 +1,98 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Action Buttons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('https://aehinnovativehydrogel.com/wp-content/uploads/2022/07/04June22_what-are-the-requirements-for-plant-growth_iStock-956366756-1024x730.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: white;
+            font-family: 'Algerian';
+            font-size: 45px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        button {
+            width: 200px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 22px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+            font-family: 'Algerian';
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:active {
+            background-color: #397d3a;
+        }
+
+        .description {
+            margin-top: 5px;
+            color: white;
+            text-align: center;
+            font-size: 28px;
+            font-family: 'Impact';
+        }
+    </style>
+</head>
+<body>
+    <h1>Choose an Action</h1>
+    <div class="button-container">
+        <div style="text-align: center;">
+            <form action="/sell" method="get">
+                <button type="submit">Sell</button>
+            </form>
+            <div class="description">Hover here to let us know the availability</div>
+        </div>
+        <div style="text-align: center;">
+            <button id="purchaseBtn">Purchase</button>
+            <div class="description">You're here to collect your needs</div>
+        </div>
+        <div style="text-align: center;">
+            <a href="{{ url_for('disease_detection') }}">
+                <button>Disease Detection</button>
+            </a>
+            <div class="description">Click here to help you with the recognition of the type of plant disease</div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.getElementById('purchaseBtn').onclick = function() {
+            window.location.href = '/pmap';
+        };
+
+        
+    </script>
+</body>
+</html>

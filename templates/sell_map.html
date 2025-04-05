@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Map</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiGXVQphL8FxzkYYMw4852RoSEBLWEaVs&libraries=places&callback=initMap"
+      async
+      defer
+    ></script>
+
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h2>Available Sellers</h2>
+    <div id="map"></div>
+
+    <script>
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 20.5937, lng: 78.9629 }, // Default center (India)
+                zoom: 5
+            });
+
+            // Fetch seller details
+            fetch('/get_sellers')
+                .then(response => response.json())
+                .then(sellers => {
+                    sellers.forEach(seller => {
+                        const marker = new google.maps.Marker({
+                            position: { lat: parseFloat(seller.latitude), lng: parseFloat(seller.longitude) },
+                            map: map
+                        });
+
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: `<b>Seller:</b> ${seller.name}<br>
+                                      <b>Product:</b> ${seller.product}<br>
+                                      <b>Quantity:</b> ${seller.quantity} kg<br>
+                                      <b>Price:</b> ₹${seller.sell_price} per kg`
+                        });
+
+                        marker.addListener('click', function () {
+                            infoWindow.open(map, marker);
+                        });
+                    });
+                });
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Plant Disease Detector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-image: url('https://png.pngtree.com/background/20231030/original/pngtree-natural-green-leaf-pattern-3d-rendered-raster-illustration-for-background-and-picture-image_5781606.jpg'); /* Replace with your image path */
+            background-size: cover; /* Makes the background cover the entire viewport */
+            background-position: center; /* Centers the background image */
+            color: white; /* Changes text color for better visibility */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+            border-radius: 10px; /* Optional: rounded corners */
+            text-align: center;
+        }
+
+        h1 {
+            color: #00ff00; /* Bright green for the heading */
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            color: white;
+        }
+
+        button {
+            background-color: #4CAF50; /* Green background for the button */
+            color: white; /* White text */
+            padding: 10px 20px; /* Padding around the button */
+            border: none; /* Removes border */
+            border-radius: 5px; /* Rounds button corners */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Plant Disease Detector</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label for="image-file">Upload an Image of the Crop:</label><br><br>
+            <input type="file" id="image-file" name="image" accept="image/*" required>
+            <br><br>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</body>
+</html>
