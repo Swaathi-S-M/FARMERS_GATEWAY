@@ -174,7 +174,7 @@ MODEL_PATH = "models/plantmodel.h5"
 IMG_SIZE = (224, 224)  # Image size used during training
 
 # Load the trained model
-model = tf.keras.models.load_model(MODEL_PATH)
+model = tf.keras.models.load_model(MODEL_PATH,compile=False)
 
 
 
