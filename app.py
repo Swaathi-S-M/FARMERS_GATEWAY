@@ -170,7 +170,7 @@ def disease_detection():
     return render_template('img.html')
 
 
-MODEL_PATH = 'C:/Users/RMIS/Desktop/real mini project modified/real mini project/plantmodel.h5'
+MODEL_PATH = "models/plantmodel.h5"
 IMG_SIZE = (224, 224)  # Image size used during training
 
 # Load the trained model
