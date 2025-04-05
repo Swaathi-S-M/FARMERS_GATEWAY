@@ -176,6 +176,8 @@ IMG_SIZE = (224, 224)  # Image size used during training
 # Load the trained model
 model = tf.keras.models.load_model(MODEL_PATH)
 
+
+
 # Define class names
 class_names = [
     'Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple_healthy',
