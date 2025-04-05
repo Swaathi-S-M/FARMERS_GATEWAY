@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from supabase import create_client, Client
